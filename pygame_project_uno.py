@@ -1,6 +1,5 @@
-import time, pygame,sys,pyautogui,keyboard,random
+import time,pygame,sys,pyautogui,keyboard,random
 
-from pygame import *
 from pygame.locals import *
 
 pygame.init()
@@ -47,11 +46,11 @@ class Player(pygame.sprite.Sprite):
             else:
                 pass
         if pressed_keys[K_DOWN]:
-            if self.rect.center[1] + 40 < SCREEN_HEIGHT:
+            if self.rect.center[1] + 50 < SCREEN_HEIGHT:
                 self.rect.move_ip(0,5)
             else:
                 pass
-        if self.rect.left > 0:
+        if self.rect.left > 100:
             if pressed_keys[K_LEFT]:
                 self.rect.move_ip(-4,0)
         if self.rect.right < SCREEN_WIDTH:
@@ -66,15 +65,30 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self):
+    """def __init__(self):
         super().__init__()
         self.image = pygame.image.load("bullet.xcf")
+        self.image = pygame.transform.scale(self.image, (30,30))
         self.rect = self.image.get_rect()
-        self.rect.center=(40,100)
+        self.rect.center=(300,200)
 
     def move(self):
         while self.rect.center[1] != 400:
             self.rect.move_ip(0,10)
+            time.sleep(.1)"""
+
+    def __init__(self):
+        super().__init__() 
+        self.image = pygame.image.load("bullet.xcf")
+        self.image = pygame.transform.scale(self.image, (30,30))
+        self.rect = self.image.get_rect()
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
+
+    def move(self):
+        self.rect.move_ip(0,SPEED)
+        if (self.rect.top > 600):
+            self.rect.top = 0
+            self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
 
 
 class Shooter(Enemy):
@@ -86,39 +100,34 @@ class Shooter(Enemy):
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
 
     def move(self):
-        """pressed_keys = pygame.key.get_pressed()
-        if self.rect.left > 0:
-            if pressed_keys[K_LEFT]:
-                self.rect.move_ip(-5,0)
-        if self.rect.right < SCREEN_WIDTH:
-            if pressed_keys[K_RIGHT]:
-                self.rect.move_ip(5,0)"""
         move = random.randint(1,2)
-        for x in range(5):
-            if self.rect.left > 0:
-                if move == 1:
+        if self.rect.left > 0:
+            if move == 1:
+                for x in range(2):
                     self.rect.move_ip(-3,0)
-            if self.rect.right < SCREEN_WIDTH:
-                if move == 2:
+        if self.rect.right < SCREEN_WIDTH-20:
+            if move == 2:
+                for x in range(2):
                     self.rect.move_ip(3,0)
 
 class Beamer(Enemy):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("shooter.xcf")
+        self.image = pygame.image.load("shooter.png")
         self.image = pygame.transform.scale(self.image, (150,100))
         self.rect = self.image.get_rect()
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
     
     def move(self):
         move = random.randint(1,2)
-        for x in range(5):
-            if self.rect.left > 0:
-                if move == 1:
-                    self.rect.move_ip(-3,0)
-            if self.rect.right < SCREEN_WIDTH:
-                if move == 2:
-                    self.rect.move_ip(3,0)
+        if self.rect.left > 0:
+            if move == 1:
+                for x in range(2):
+                    self.rect.move_ip(-10,0)
+        if self.rect.right < SCREEN_WIDTH-20:
+            if move == 2:
+                for x in range(2):
+                    self.rect.move_ip(10,0)
 
 class Boss(Enemy):
     pass
@@ -132,6 +141,8 @@ B1 = Bullet()
 
 enemies = pygame.sprite.Group()
 enemies.add(B1)
+enemies.add(E1)
+enemies.add(E2)
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
@@ -153,7 +164,7 @@ while True:
         DISPLAYSURF.blit(entity.image,entity.rect)
         entity.move()
 
-    """if pygame.sprite.spritecollideany(P1,enemies):
+    if pygame.sprite.spritecollideany(P1,enemies):
         pygame.mixer.Sound('crash.wav').play()
         DISPLAYSURF.fill(RED)
         DISPLAYSURF.blit(game_over,(150,150))
@@ -162,7 +173,7 @@ while True:
             entity.kill()
         time.sleep(1)
         pygame.quit
-        sys.exit()"""
+        sys.exit()
          
     pygame.display.update()
     Frame_Per_Sec.tick(FPS)
