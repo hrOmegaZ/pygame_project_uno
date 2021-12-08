@@ -65,22 +65,10 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    """def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load("bullet.xcf")
-        self.image = pygame.transform.scale(self.image, (30,30))
-        self.rect = self.image.get_rect()
-        self.rect.center=(300,200)
-
-    def move(self):
-        while self.rect.center[1] != 400:
-            self.rect.move_ip(0,10)
-            time.sleep(.1)"""
-
     def __init__(self):
         super().__init__() 
-        self.image = pygame.image.load("bullet.xcf")
-        self.image = pygame.transform.scale(self.image, (30,30))
+        self.image = pygame.image.load("bullet.png")
+        self.image = pygame.transform.scale(self.image, (40,40))
         self.rect = self.image.get_rect()
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
 
@@ -88,10 +76,24 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.move_ip(0,SPEED)
         if (self.rect.top > 600):
             self.rect.top = 0
-            self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
+            self.rect.center = (shooter_pos, 40)
+
+class Bullet_2(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__() 
+        self.image = pygame.image.load("bullet.png")
+        self.image = pygame.transform.scale(self.image, (40,40))
+        self.rect = self.image.get_rect()
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
+
+    def move(self):
+        self.rect.move_ip(0,SPEED)
+        if (self.rect.top > 600):
+            self.rect.top = 0
+            self.rect.center = (beamer_pos, 40)
 
 
-class Shooter(Enemy):
+class Beamer(Enemy):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("alien_spaceship2.png")
@@ -100,6 +102,7 @@ class Shooter(Enemy):
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
 
     def move(self):
+        global beamer_pos
         move = random.randint(1,2)
         if self.rect.left > 0:
             if move == 1:
@@ -109,8 +112,9 @@ class Shooter(Enemy):
             if move == 2:
                 for x in range(2):
                     self.rect.move_ip(3,0)
+        beamer_pos = self.rect[0] + 75
 
-class Beamer(Enemy):
+class Shooter(Enemy):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("shooter.png")
@@ -119,34 +123,41 @@ class Beamer(Enemy):
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
     
     def move(self):
+        global shooter_pos
         move = random.randint(1,2)
         if self.rect.left > 0:
             if move == 1:
-                for x in range(2):
-                    self.rect.move_ip(-10,0)
+                for x in range(3):
+                    self.rect.move_ip(-3,0)
         if self.rect.right < SCREEN_WIDTH-20:
             if move == 2:
-                for x in range(2):
-                    self.rect.move_ip(10,0)
+                for x in range(3):
+                    self.rect.move_ip(3,0)
+        shooter_pos = self.rect[0] + 75
 
 class Boss(Enemy):
     pass
 
 
+shooter_pos = 0
+beamer_pos = 0
 
 P1 = Player()
 E1 = Shooter()
 E2 = Beamer()
 B1 = Bullet()
+B2 = Bullet_2()
 
 enemies = pygame.sprite.Group()
 enemies.add(B1)
+enemies.add(B2)
 enemies.add(E1)
 enemies.add(E2)
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
 all_sprites.add(B1)
+all_sprites.add(B2)
 all_sprites.add(E1)
 all_sprites.add(E2)
 
