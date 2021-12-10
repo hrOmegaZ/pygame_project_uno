@@ -1,4 +1,4 @@
-import time,pygame,sys,pyautogui,keyboard,random
+import time,pygame,sys,random
 
 from pygame.locals import *
 
@@ -122,7 +122,7 @@ class Beamer(Enemy):
         self.image = pygame.image.load("alien_spaceship2.png")
         self.image = pygame.transform.scale(self.image, (150,100))
         self.rect = self.image.get_rect()
-        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-100),0)
 
     def move(self):
         global beamer_pos
@@ -143,7 +143,7 @@ class Shooter(Enemy):
         self.image = pygame.image.load("shooter.png")
         self.image = pygame.transform.scale(self.image, (150,100))
         self.rect = self.image.get_rect()
-        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-100),0)
     
     def move(self):
         global shooter_pos
@@ -164,7 +164,7 @@ class Shooter2(Enemy):
         self.image = pygame.image.load("shooter.png")
         self.image = pygame.transform.scale(self.image, (150,100))
         self.rect = self.image.get_rect()
-        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-100),0)
     
     def move(self):
         global shooter_pos2
@@ -183,9 +183,15 @@ class power_up(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("star.png")
-        self.image = pygame.transform.scale(self.image, (150,100))
+        self.image = pygame.transform.scale(self.image, (50,50))
         self.rect = self.image.get_rect()
-        self.rect.center=(random.randint(0,SCREEN_WIDTH), random.randint(0,SCREEN_HEIGHT))
+        self.rect.center=(random.randint(0,SCREEN_WIDTH), random.randint(100,SCREEN_HEIGHT))
+    
+    def move(self):
+        self.rect.move_ip(0,0)
+
+    def delete(self):
+        self.rect.move_ip(999,999)
 
 shooter_pos = 0
 shooter_pos2 = 0
@@ -196,9 +202,12 @@ bullet_pos2 = 0
 bullet_pos3 = 0
 number = 5
 power_time = False
-power = []
+power = [1,5,10]
+start_time = 0
+max_time = 10
 for x in range(3):
     power.append(random.randint(1,100))
+print(power)
 
 P1 = Player()
 E1 = Shooter()
@@ -207,7 +216,7 @@ E2 = Beamer()
 B1 = Bullet()
 B2 = Bullet_2()
 B3 = Bullet3()
-P1 = power_up()
+PU1 = power_up()
 
 enemies = pygame.sprite.Group()
 enemies.add(B1)
@@ -216,7 +225,7 @@ enemies.add(E1)
 enemies.add(E2)
 
 power_ups = pygame.sprite.Group()
-power_ups.add(P1)
+power_ups.add(PU1)
 
 all_sprites = pygame.sprite.Group()
 all_sprites.add(P1)
@@ -239,14 +248,21 @@ while True:
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image,entity.rect)
         entity.move()
-    
+        print(time.time() - start_time)
+        if (time.time() - start_time) < max_time:
+            DISPLAYSURF.blit(PU1.image,PU1.rect)
+
     for amount in power:
         if amount == score:
-            DISPLAYSURF.blit(P1.image,P1.rect)
+            DISPLAYSURF.blit(PU1.image,PU1.rect)
+            
+            
     
     if bullet_pos > SCREEN_HEIGHT:
         score += 1
     if bullet_pos2 > SCREEN_HEIGHT:
+        score += 1
+    if bullet_pos3 > SCREEN_HEIGHT:
         score += 1
     
     if score > number:
@@ -259,22 +275,22 @@ while True:
         enemies.add(B3)
         all_sprites.add(B3)
 
-    if pygame.sprite.spritecollideany(P1,enemies):
-        if power_time == True:
-            pass
-        else:
-            pygame.mixer.Sound('crash.wav').play()
-            DISPLAYSURF.fill(RED)
-            DISPLAYSURF.blit(game_over,(150,150))
-            pygame.display.update()
-            for entity in all_sprites:
-                entity.kill()
-            time.sleep(1)
-            pygame.quit
-            sys.exit()
+    if pygame.sprite.spritecollideany(P1,enemies) and power_time == False:
+        pygame.mixer.Sound('crash.wav').play()
+        DISPLAYSURF.fill(RED)
+        DISPLAYSURF.blit(game_over,(150,150))
+        pygame.display.update()
+        for entity in all_sprites:
+            entity.kill()
+        time.sleep(1)
+        pygame.quit
+        sys.exit()
 
-    if pygame.sprite.spritecollideany(P1,enemies):
+    if pygame.sprite.spritecollideany(P1,power_ups):
         power_time = True
+        for entity in power_ups:
+            start_time = time.time()
+            entity.move()
 
     if score == 100:
         DISPLAYSURF.fill(WHITE)
