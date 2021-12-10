@@ -190,9 +190,6 @@ class power_up(pygame.sprite.Sprite):
     def move(self):
         self.rect.move_ip(0,0)
 
-    def delete(self):
-        self.rect.move_ip(999,999)
-
 shooter_pos = 0
 shooter_pos2 = 0
 beamer_pos = 0
@@ -235,6 +232,7 @@ all_sprites.add(E1)
 all_sprites.add(E2)
 
 while True:
+    
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -247,6 +245,7 @@ while True:
     
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image,entity.rect)
+        pygame.mixer.Sound('pssst-1 (1).wav').play()
         entity.move()
         print(time.time() - start_time)
         if (time.time() - start_time) < max_time:
@@ -256,8 +255,6 @@ while True:
         if amount == score:
             DISPLAYSURF.blit(PU1.image,PU1.rect)
             
-            
-    
     if bullet_pos > SCREEN_HEIGHT:
         score += 1
     if bullet_pos2 > SCREEN_HEIGHT:
@@ -290,7 +287,6 @@ while True:
         power_time = True
         for entity in power_ups:
             start_time = time.time()
-            entity.move()
 
     if score == 100:
         DISPLAYSURF.fill(WHITE)
