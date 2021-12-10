@@ -202,7 +202,7 @@ bullet_pos2 = 0
 bullet_pos3 = 0
 number = 5
 power_time = False
-power = [1,5,10]
+power = []
 start_time = 0
 max_time = 10
 for x in range(3):
