@@ -73,7 +73,8 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load("bullet.png")
         self.image = pygame.transform.scale(self.image, (40,40))
         self.rect = self.image.get_rect()
-        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
+        self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0)
+        pygame.mixer.Sound('pssst-1 (1).wav').play()
 
     def move(self):
         global bullet_pos
@@ -90,6 +91,7 @@ class Bullet_2(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40,40))
         self.rect = self.image.get_rect()
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
+        pygame.mixer.Sound('pssst-1 (1).wav').play()
 
     def move(self):
         global bullet_pos2
@@ -106,6 +108,7 @@ class Bullet3(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40,40))
         self.rect = self.image.get_rect()
         self.rect.center=(random.randint(40,SCREEN_WIDTH-40),0) 
+        pygame.mixer.Sound('pssst-1 (1).wav').play()
 
     def move(self):
         global bullet_pos3
@@ -202,9 +205,9 @@ power_time = False
 power = []
 start_time = 0
 max_time = 10
-for x in range(3):
-    power.append(random.randint(1,100))
-print(power)
+power.append(random.randint(10,33))
+power.append(random.randint(33,66))
+power.append(random.randint(66,100))
 
 P1 = Player()
 E1 = Shooter()
@@ -232,7 +235,7 @@ all_sprites.add(E1)
 all_sprites.add(E2)
 
 while True:
-    
+    pygame.mixer.Sound('ChillingMusic.wav').play()
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -245,11 +248,13 @@ while True:
     
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image,entity.rect)
-        pygame.mixer.Sound('pssst-1 (1).wav').play()
+        
         entity.move()
         print(time.time() - start_time)
         if (time.time() - start_time) < max_time:
             DISPLAYSURF.blit(PU1.image,PU1.rect)
+        else:
+            power_time = False
 
     for amount in power:
         if amount == score:
